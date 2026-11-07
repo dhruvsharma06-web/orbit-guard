@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrbitGuard · Space Debris Collision Predictor</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css">
+<script type="importmap">{"imports":{"three":"/static/three.module.js","three/addons/controls/OrbitControls.js":"/static/OrbitControls.js"}}</script>
+<script src="/static/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="scene"></div>
+
+<aside id="sidebar" class="panel">
+  <h1>ORBIT<span>GUARD</span></h1>
+  <p class="sub">space debris collision predictor</p>
+
+  <div class="controls">
+    <label>Objects <output id="limitOut">1500</output>
+      <input id="limit" type="range" min="200" max="3000" step="100" value="1500"></label>
+    <label>Window <output id="hoursOut">24</output> h
+      <input id="hours" type="range" min="2" max="48" step="2" value="24"></label>
+    <label>Alert distance <output id="thrOut">10</output> km
+      <input id="thr" type="range" min="1" max="30" step="1" value="10"></label>
+    <button id="runBtn" class="primary">▶ RUN ANALYSIS</button>
+    <button id="statsBtn" class="ghost" disabled>▤ STATS</button>
+  </div>
+
+  <div id="summary" class="summary hidden"></div>
+  <div class="filters hidden" id="filters">
+    <button data-f="ALL" class="on">ALL</button><button data-f="CRITICAL">CRIT</button>
+    <button data-f="HIGH">HIGH</button><button data-f="MEDIUM">MED</button><button data-f="LOW">LOW</button>
+  </div>
+  <ul id="events"></ul>
+</aside>
+
+<aside id="detail" class="panel hidden">
+  <button class="close" id="closeDetail">✕</button>
+  <div id="detailBody"></div>
+  <div class="maneuver">
+    <h3>MANEUVER SIMULATOR</h3>
+    <label>Move <select id="mvWhich"><option value="a">object A</option><option value="b">object B</option></select></label>
+    <label>Δv <output id="dvOut">0.10</output> m/s
+      <input id="dv" type="range" min="0.01" max="1" step="0.01" value="0.1"></label>
+    <label>Burn <output id="leadOut">2</output> h before TCA
+      <input id="lead" type="range" min="0.5" max="12" step="0.5" value="2"></label>
+    <button id="mvBtn" class="ghost">SIMULATE BURN</button>
+    <div id="mvResult"></div>
+  </div>
+  <button id="briefBtn" class="primary">⚡ AI MISSION BRIEFING</button>
+  <pre id="briefing"></pre>
+</aside>
+
+<div id="timebar" class="panel hidden">
+  <button id="playBtn" class="ghost">▶</button>
+  <input id="time" type="range" min="0" max="1439" step="1" value="0">
+  <span id="timeLabel">T+0 min</span>
+</div>
+
+<div id="legend" class="panel">
+  <span><i class="dot cyan"></i>satellite</span>
+  <span><i class="dot orange"></i>debris</span>
+  <span><i class="dot red"></i>selected event</span>
+</div>
+
+<div id="hover" class="hidden"></div>
+<div id="loading" class="hidden"><div class="spinner"></div><p id="loadingText">propagating orbits…</p></div>
+<div id="toast" class="hidden"></div>
+
+<div id="statsModal" class="modal hidden">
+  <div class="panel modal-body">
+    <button class="close" id="closeStats">✕</button>
+    <h2>MISSION STATISTICS</h2>
+    <div class="charts">
+      <div><h4>Miss distance (km)</h4><div class="cbox"><canvas id="cMiss"></canvas></div></div>
+      <div><h4>Events per hour</h4><div class="cbox"><canvas id="cHour"></canvas></div></div>
+      <div class="wide"><h4>Objects by altitude band (km)</h4><div class="cbox"><canvas id="cAlt"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

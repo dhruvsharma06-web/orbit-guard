@@ -1,0 +1,38 @@
+# Downloads fresh orbit data (TLEs) from CelesTrak into data/ once a day and commits it.
+# Each commit triggers a new Vercel deployment with up-to-date orbits.
+name: Update orbit data
+on:
+  schedule:
+    - cron: "17 3 * * *"   # daily 03:17 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ["data/**"]
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download TLEs
+        run: |
+          set -e
+          dl() {
+            curl -fsSL -A "OrbitGuard/1.0 (github actions)" -o "data/$1.txt.new" \
+              "https://celestrak.org/NORAD/elements/gp.php?GROUP=$2&FORMAT=tle" || return 0
+            # keep only real TLE files (not error pages)
+            if grep -q "^1 " "data/$1.txt.new"; then mv "data/$1.txt.new" "data/$1.txt"; else rm -f "data/$1.txt.new"; fi
+          }
+          dl stations stations
+          dl active active
+          dl cosmos-2251-debris cosmos-2251-debris
+          dl iridium-33-debris iridium-33-debris
+          dl fengyun-1c-debris 1999-025
+          ls -la data
+      - name: Commit if changed
+        run: |
+          git config user.name "orbitguard-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/*.txt || true
+          git diff --cached --quiet || (git commit -m "Update orbit data $(date -u +%F)" && git push)
