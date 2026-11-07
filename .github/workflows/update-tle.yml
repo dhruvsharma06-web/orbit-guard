@@ -28,7 +28,8 @@ jobs:
           dl active active
           dl cosmos-2251-debris cosmos-2251-debris
           dl iridium-33-debris iridium-33-debris
-          dl fengyun-1c-debris 1999-025
+          dl fengyun-1c-debris fengyun-1c-debris
+          dl cosmos-1408-debris cosmos-1408-debris
           ls -la data
       - name: Commit if changed
         run: |

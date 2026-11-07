@@ -25,7 +25,7 @@ R_EARTH = 6371.0  # km, spherical Earth is fine for visualisation
 # CelesTrak groups used when data/ has no TLE files (e.g. a fresh Vercel deploy)
 CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP={}&FORMAT=tle"
 GROUPS = {"stations": "stations", "active": "active", "cosmos-2251-debris": "cosmos-2251-debris",
-          "iridium-33-debris": "iridium-33-debris", "fengyun-1c-debris": "1999-025"}
+          "iridium-33-debris": "iridium-33-debris", "fengyun-1c-debris": "fengyun-1c-debris", "cosmos-1408-debris": "cosmos-1408-debris"}
 CACHE_DIR = os.path.join(tempfile.gettempdir(), "orbitguard-tle")
 CACHE_HOURS = 6
 
